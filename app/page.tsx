@@ -1,64 +1,63 @@
-import Image from "next/image";
+"use client";
+
+import { useMemo, useState } from "react";
+import { CategoryFilters, type FilterValue } from "@/components/CategoryFilters";
+import { PlaceCard } from "@/components/PlaceCard";
+import { places } from "@/data/places";
+import type { Category } from "@/types/place";
+
+function filterPlaces(
+  list: typeof places,
+  filter: FilterValue,
+): typeof places {
+  if (filter === "all") return list;
+  return list.filter((p) =>
+    p.categories.includes(filter as Category),
+  );
+}
 
 export default function Home() {
+  const [filter, setFilter] = useState<FilterValue>("all");
+
+  const visible = useMemo(() => filterPlaces(places, filter), [filter]);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="flex flex-1 flex-col bg-zinc-50 dark:bg-zinc-950">
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6 sm:py-14">
+        <header className="max-w-2xl">
+          <h1 className="text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl dark:text-zinc-50">
+            SPB Guide
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="mt-3 text-base leading-relaxed text-zinc-600 dark:text-zinc-400">
+            Подборка мест в Санкт-Петербурге: поесть, выпить, погулять и
+            открыть для себя город. Выберите категорию — покажем подходящие
+            локации.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+        </header>
+
+        <section className="mt-10 border-t border-zinc-200 pt-8 dark:border-zinc-800">
+          <CategoryFilters value={filter} onChange={setFilter} />
+        </section>
+
+        <section
+          className="mt-10"
+          aria-live="polite"
+          aria-label="Список мест"
+        >
+          {visible.length === 0 ? (
+            <p className="rounded-lg border border-dashed border-zinc-300 bg-white px-4 py-8 text-center text-sm text-zinc-600 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-400">
+              По этой категории пока нет мест в подборке.
+            </p>
+          ) : (
+            <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {visible.map((place) => (
+                <li key={place.id}>
+                  <PlaceCard place={place} />
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
       </main>
     </div>
   );
