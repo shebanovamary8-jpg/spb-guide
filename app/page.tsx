@@ -6,6 +6,25 @@ import { PlaceCard } from "@/components/PlaceCard";
 import { places } from "@/data/places";
 import type { Category } from "@/types/place";
 
+const CARD_SPAN_CLASSES = [
+  "lg:col-span-4",
+  "lg:col-span-4",
+  "lg:col-span-4",
+  "lg:col-span-3",
+  "lg:col-span-5",
+  "lg:col-span-4",
+  "lg:col-span-5",
+  "lg:col-span-3",
+  "lg:col-span-4",
+  "lg:col-span-4",
+  "lg:col-span-5",
+  "lg:col-span-3",
+] as const;
+
+function getCardSpan(index: number): (typeof CARD_SPAN_CLASSES)[number] {
+  return CARD_SPAN_CLASSES[index % CARD_SPAN_CLASSES.length];
+}
+
 function filterPlaces(list: typeof places, filter: FilterValue) {
   if (filter === null) return list;
   return list.filter((p) => p.categories.includes(filter as Category));
@@ -17,80 +36,96 @@ export default function Home() {
   const visible = useMemo(() => filterPlaces(places, filter), [filter]);
 
   return (
-    <div className="flex flex-1 flex-col bg-background text-foreground">
-      <main className="mx-auto w-full max-w-5xl flex-1 px-5 pb-0 pt-10 sm:px-8 sm:pt-14">
-        {/* Hero */}
-        <header className="relative text-center">
-          <p className="text-sm tracking-wide">привет!</p>
+    <div className="page-wrapper">
+      <main className="w-full flex-1">
+        <section className="hero-section">
+          <div className="site-container">
+            <div className="hero-layout">
+              <header className="hero-layout-inner">
+                <div className="hero-top">
+                  <p className="hero-greeting">привет!</p>
+                </div>
 
-          <div className="pointer-events-none absolute inset-0 hidden sm:block" aria-hidden>
-            <span className="absolute right-0 top-2 h-16 w-12 border-b-2 border-foreground" />
-            <span className="absolute left-4 top-24 h-20 w-14 border-2 border-foreground" />
-            <span className="absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-col gap-2">
-              <span className="mx-auto block h-px w-16 bg-foreground" />
-              <span className="mx-auto block h-px w-24 bg-foreground" />
-              <span className="mx-auto block h-px w-12 bg-foreground" />
-              <span className="mx-auto block h-px w-20 bg-foreground" />
-            </span>
+                <div className="hero-decor" aria-hidden>
+                  <span className="hero-decor__figure-right" />
+                  <span className="hero-decor__figure-left" />
+                  <span className="hero-decor__lines">
+                    <span className="hero-decor__line" />
+                    <span className="hero-decor__line" />
+                    <span className="hero-decor__line" />
+                    <span className="hero-decor__line" />
+                  </span>
+                </div>
+
+                <div className="hero-center">
+                  <p className="hero-intro">
+                    Я Маруся, уже 4 раза была в Питере и каждый раз открываю
+                    этот город с новой стороны. Тут собраны места, которые я уже
+                    успела посетить. И если ты доверяешь моему мнению — добро
+                    пожаловать в подборку
+                  </p>
+                </div>
+
+                <div className="hero-bottom">
+                  <div className="hero-status-bar">
+                    <span>Смотреть Питер</span>
+                    <span>Обновлено: 2026</span>
+                  </div>
+                </div>
+              </header>
+            </div>
           </div>
-
-          <p className="mx-auto mt-16 max-w-md text-sm leading-relaxed sm:mt-20 sm:max-w-lg sm:text-base">
-            Я Маруся, уже 4 раза была в Питере и каждый раз открываю этот город с
-            новой стороны. Тут собраны места, которые я уже успела посетить. И если
-            ты доверяешь моему мнению — добро пожаловать в подборку
-          </p>
-
-          <div className="mt-10 flex items-center justify-between border-t border-foreground/30 pt-3 text-xs tracking-wide sm:text-sm">
-            <span>Смотреть Питер</span>
-            <span
-              className="inline-block h-3 w-5 border border-foreground"
-              aria-hidden
-            />
-            <span>Обновлено: 2024</span>
-          </div>
-        </header>
-
-        {/* Filters */}
-        <section className="mt-14 sm:mt-16">
-          <CategoryFilters value={filter} onChange={setFilter} />
         </section>
 
-        {/* Places */}
+        <section className="filters-section">
+          <div className="site-container">
+            <CategoryFilters value={filter} onChange={setFilter} />
+          </div>
+        </section>
+
         <section
-          className="mt-12 sm:mt-14"
+          className="places-section"
           aria-live="polite"
           aria-label="Список мест"
         >
-          {visible.length === 0 ? (
-            <p className="border border-dashed border-foreground/40 px-4 py-10 text-center text-sm">
-              По этой категории пока нет мест в подборке.
-            </p>
-          ) : (
-            <ul className="grid grid-cols-1 gap-10 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3 lg:gap-6">
-              {visible.map((place) => (
-                <li key={place.id}>
-                  <PlaceCard place={place} />
-                </li>
-              ))}
-            </ul>
-          )}
+          <div className="site-container">
+            {visible.length === 0 ? (
+              <p className="places-empty">
+                По этой категории пока нет мест в подборке.
+              </p>
+            ) : (
+              <ul className="places-grid">
+                {visible.map((place, index) => (
+                  <li
+                    key={place.id}
+                    className={`min-w-0 ${getCardSpan(index)}`}
+                  >
+                    <PlaceCard place={place} />
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="mt-16 bg-gradient-to-b from-background via-[#ddb89e] to-accent px-5 pb-8 pt-20 text-center text-sm sm:mt-20 sm:px-8 sm:pt-28">
-        <p className="text-base tracking-wide">Классной поездки!</p>
-        <div className="mt-10 flex flex-col items-center justify-between gap-3 text-xs tracking-wide sm:flex-row sm:text-sm">
-          <span>Задизайнила Маруся</span>
-          <span className="flex gap-3">
-            <a href="#" className="transition-colors hover:text-background">
-              телега
-            </a>
-            <span>/</span>
-            <a href="#" className="transition-colors hover:text-background">
-              инста
-            </a>
-          </span>
+      <footer className="footer-section">
+        <div className="footer-gradient">
+          <div className="site-container">
+            <p className="footer-message">Классной поездки!</p>
+            <div className="footer-credits">
+              <span>Задизайнила Маруся</span>
+              <span className="footer-links">
+                <a href="#" className="footer-link">
+                  телега
+                </a>
+                <span>/</span>
+                <a href="#" className="footer-link">
+                  инста
+                </a>
+              </span>
+            </div>
+          </div>
         </div>
       </footer>
     </div>
