@@ -3,7 +3,7 @@
 import type { Category } from "@/types/place";
 import { ALL_CATEGORIES, CATEGORY_LABELS } from "@/types/place";
 
-export type FilterValue = "all" | Category;
+export type FilterValue = Category | null;
 
 type CategoryFiltersProps = {
   value: FilterValue;
@@ -11,23 +11,20 @@ type CategoryFiltersProps = {
 };
 
 export function CategoryFilters({ value, onChange }: CategoryFiltersProps) {
+  const handleClick = (category: Category) => {
+    onChange(value === category ? null : category);
+  };
+
   return (
-    <div className="flex flex-col gap-3">
-      <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
-        Что ищете?
-      </p>
-      <div className="flex flex-wrap gap-2">
-        <FilterChip
-          label="Все"
-          selected={value === "all"}
-          onClick={() => onChange("all")}
-        />
+    <div className="flex flex-col items-center gap-6 text-center">
+      <h2 className="text-base tracking-wide text-foreground">Какие планы?</h2>
+      <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
         {ALL_CATEGORIES.map((category) => (
           <FilterChip
             key={category}
             label={CATEGORY_LABELS[category]}
             selected={value === category}
-            onClick={() => onChange(category)}
+            onClick={() => handleClick(category)}
           />
         ))}
       </div>
@@ -48,11 +45,12 @@ function FilterChip({ label, selected, onClick }: FilterChipProps) {
       onClick={onClick}
       aria-pressed={selected}
       className={[
-        "rounded-full border px-4 py-2 text-sm font-medium transition-colors",
-        "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 dark:focus-visible:outline-zinc-100",
+        "rounded-full border border-foreground px-4 py-1.5 text-sm tracking-wide transition-colors",
+        "hover:border-accent hover:text-accent",
+        "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground",
         selected
-          ? "border-zinc-900 bg-zinc-900 text-white dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900"
-          : "border-zinc-200 bg-white text-zinc-800 hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:border-zinc-500 dark:hover:bg-zinc-800",
+          ? "border-foreground bg-foreground text-background"
+          : "bg-transparent text-foreground",
       ].join(" ")}
     >
       {label}

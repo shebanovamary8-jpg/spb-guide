@@ -3,86 +3,86 @@ import type { Place } from "@/types/place";
 export const places: Place[] = [
   {
     id: "1",
-    name: "Эрмитаж",
-    shortDescription:
-      "Музейный комплекс на Дворцовой набережной — одна из крупнейших художественных коллекций в мире.",
-    categories: ["scenic", "walk", "atmosphere"],
+    name: "Umai Shinkansen",
+    shortDescription: "Азиатское бистро, где еда едет на поезде",
+    categories: ["eat"],
+    image: "/places/placeholder-1.jpg",
   },
   {
     id: "2",
-    name: "Исаакиевский собор",
-    shortDescription:
-      "Собор с колоннадой и панорамой центра города — классика вида на Неву и золотые купола.",
-    categories: ["scenic", "walk"],
+    name: "1,5 комнаты Бродского",
+    shortDescription: "Музей-квартира поэта на набережной Мойки",
+    categories: ["see"],
+    image: "/places/placeholder-2.jpg",
   },
   {
     id: "3",
-    name: "Дом Зингера (книжный)",
-    shortDescription:
-      "Историческое здание на Невском с кафе наверху и видом на Казанский собор.",
-    categories: ["drink", "eat", "atmosphere"],
+    name: "Laboratorio Distilita",
+    shortDescription: "Бар с дистиллятами и коктейлями в центре",
+    categories: ["drink"],
+    image: "/places/placeholder-3.jpg",
   },
   {
     id: "4",
-    name: "Летний сад",
-    shortDescription:
-      "Парк с аллеями, скульптурами и фонтанами — спокойная прогулка в сердце Петербурга.",
-    categories: ["walk", "scenic", "atmosphere"],
+    name: "Эрмитаж",
+    shortDescription: "Музейный комплекс на Дворцовой набережной",
+    categories: ["see"],
+    image: "/places/placeholder-4.jpg",
   },
   {
     id: "5",
-    name: "Невский проспект",
-    shortDescription:
-      "Главная улица города: архитектура, витрины, люди и постоянное движение от площади к площади.",
-    categories: ["walk", "scenic"],
+    name: "Дом Зингера (книжный)",
+    shortDescription: "Кафе наверху и вид на Казанский собор",
+    categories: ["eat", "drink", "see"],
+    image: "/places/placeholder-5.jpg",
   },
   {
     id: "6",
-    name: "Петропавловская крепость",
-    shortDescription:
-      "Крепость на Заячьем острове с собором и музеями — символ основания Санкт-Петербурга.",
-    categories: ["scenic", "walk"],
+    name: "Летний сад",
+    shortDescription: "Парк с аллеями и фонтанами в центре города",
+    categories: ["see", "relax"],
+    image: "/places/placeholder-6.jpg",
   },
   {
     id: "7",
     name: "«Севкабель Порт»",
-    shortDescription:
-      "Пространство на набережной с едой, музыкой и закатами над Финским заливом.",
-    categories: ["eat", "drink", "fun", "atmosphere"],
+    shortDescription: "Еда, музыка и закаты над Финским заливом",
+    categories: ["eat", "drink", "see"],
+    image: "/places/placeholder-7.jpg",
   },
   {
     id: "8",
-    name: "Крыша Лофт Проекта «Этажи»",
-    shortDescription:
-      "Смотровая площадка и бар на высоте — город с высоты птичьего полёта.",
-    categories: ["drink", "scenic", "atmosphere"],
+    name: "Крыша «Этажи»",
+    shortDescription: "Смотровая площадка и бар с панорамой",
+    categories: ["drink", "see"],
+    image: "/places/placeholder-8.jpg",
   },
   {
     id: "9",
     name: "Мариинский театр",
-    shortDescription:
-      "Оперный и балетный театр мирового уровня — вечерний выход в классическом интерьере.",
-    categories: ["fun", "scenic", "atmosphere"],
+    shortDescription: "Опера и балет в классическом интерьере",
+    categories: ["see"],
+    image: "/places/placeholder-9.jpg",
   },
   {
     id: "10",
-    name: "Елагин остров",
-    shortDescription:
-      "Парк с дворцом, прудами и дорожками для неспешных прогулок и пикников.",
-    categories: ["walk", "scenic"],
+    name: "Чайная «Китай-город»",
+    shortDescription: "Чайная церемония и спокойная атмосфера",
+    categories: ["relax"],
+    image: "/places/placeholder-10.jpg",
   },
   {
     id: "11",
-    name: "Канал Грибоедова у Спаса на Крови",
-    shortDescription:
-      "Набережная с видом на храм и лодки — один из самых узнаваемых кадров Петербурга.",
-    categories: ["scenic", "walk", "atmosphere"],
+    name: "Спас на Крови",
+    shortDescription: "Храм и набережная канала Грибоедова",
+    categories: ["see"],
+    image: "/places/placeholder-11.jpg",
   },
   {
     id: "12",
     name: "Новая Голландия",
-    shortDescription:
-      "Остров с кирпичной аркой, ресторанами, рынком и культурной программой на любой вкус.",
-    categories: ["eat", "drink", "walk", "fun", "atmosphere"],
+    shortDescription: "Рестораны, рынок и прогулки у воды",
+    categories: ["eat", "drink", "see", "relax"],
+    image: "/places/placeholder-12.jpg",
   },
 ];
