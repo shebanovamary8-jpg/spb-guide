@@ -18,23 +18,24 @@ type PlaceCardProps = {
 export function PlaceCard({ place }: PlaceCardProps) {
   const [imageFailed, setImageFailed] = useState(false);
   const gradientKey = place.categories[0] ?? "see";
+  const showImage = Boolean(place.image) && !imageFailed;
 
   return (
     <article className="card group">
       <div className="card-image-wrapper">
-        {imageFailed ? (
-          <div
-            className={`absolute inset-0 ${PLACEHOLDER_CLASS[gradientKey]}`}
-            aria-hidden
-          />
-        ) : (
+        {showImage ? (
           <Image
-            src={place.image}
+            src={place.image!}
             alt={place.name}
             fill
             className="object-cover transition-opacity group-hover:opacity-95"
             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 42vw"
             onError={() => setImageFailed(true)}
+          />
+        ) : (
+          <div
+            className={`absolute inset-0 ${PLACEHOLDER_CLASS[gradientKey]}`}
+            aria-hidden
           />
         )}
         <div className="photo-dots" aria-hidden>

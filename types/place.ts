@@ -5,7 +5,7 @@ export type Place = {
   name: string;
   shortDescription: string;
   categories: Category[];
-  image: string;
+  image?: string;
 };
 
 export const CATEGORY_LABELS: Record<Category, string> = {
