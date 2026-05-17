@@ -46,17 +46,6 @@ export default function Home() {
                   <p className="hero-greeting">привет!</p>
                 </div>
 
-                <div className="hero-decor" aria-hidden>
-                  <span className="hero-decor__figure-right" />
-                  <span className="hero-decor__figure-left" />
-                  <span className="hero-decor__lines">
-                    <span className="hero-decor__line" />
-                    <span className="hero-decor__line" />
-                    <span className="hero-decor__line" />
-                    <span className="hero-decor__line" />
-                  </span>
-                </div>
-
                 <div className="hero-center">
                   <p className="hero-intro">
                     Я Маруся, уже 4 раза была в Питере и каждый раз открываю
