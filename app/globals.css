@@ -50,8 +50,9 @@
   --text-status: 14px;
   --text-footer: 14px;
   --text-filters-title: 24px;
-  --text-filter: 12px;
+  --text-filter: 14px;
   --text-card-title: 16px;
+  --line-card-title: 20px;
   --text-card-description: 14px;
   --letter-spacing-base: -0.01em;
 }
@@ -66,7 +67,7 @@
 
     --text-hero-greeting: 16px;
     --text-hero-intro: 20px;
-    --text-status: 16px;
+    --text-status: 14px;
     --text-footer: 16px;
   }
 }
@@ -389,7 +390,7 @@ body {
 .place-card__title {
   margin: 0;
   font-size: var(--text-card-title);
-  line-height: 1.35;
+  line-height: var(--line-card-title);
   letter-spacing: var(--letter-spacing-base);
   color: var(--color-text-primary);
 }

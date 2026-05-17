@@ -15,17 +15,25 @@ type PlaceCardProps = {
   place: Place;
 };
 
+function getPlaceImageSrc(place: Place): string | undefined {
+  if (place.images && place.images.length > 0) {
+    return place.images[0];
+  }
+  return place.image;
+}
+
 export function PlaceCard({ place }: PlaceCardProps) {
   const [imageFailed, setImageFailed] = useState(false);
   const gradientKey = place.categories[0] ?? "see";
-  const showImage = Boolean(place.image) && !imageFailed;
+  const imageSrc = getPlaceImageSrc(place);
+  const showImage = Boolean(imageSrc) && !imageFailed;
 
   return (
     <article className="card group">
       <div className="card-image-wrapper">
         {showImage ? (
           <Image
-            src={place.image!}
+            src={imageSrc!}
             alt={place.name}
             fill
             className="object-cover transition-opacity group-hover:opacity-95"

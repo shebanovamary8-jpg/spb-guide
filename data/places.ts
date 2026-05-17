@@ -2,10 +2,15 @@ import type { Place } from "@/types/place";
 
 export const places: Place[] = [
   {
-    id: "1",
-    name: "Umai Shinkansen",
+    id: "umami",
+    name: "Umami Shinkansen",
     shortDescription: "Азиатское бистро, где еда едет на поезде",
     categories: ["eat"],
+    images: [
+      "/places/umami/1.webp",
+      "/places/umami/2.webp",
+      "/places/umami/3.webp",
+    ],
   },
   {
     id: "2",
