@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import type { Category, Place } from "@/types/place";
+import { preventHangingPrepositions } from "@/lib/typography";
 
 const PLACEHOLDER_GRADIENTS: Record<Category, string> = {
   eat: "from-[#c4a88a] to-[#8b6f5c]",
@@ -110,7 +111,9 @@ export function PlaceCard({ place }: PlaceCardProps) {
 
       <div className="card-content">
         <h2 className="card-title">{place.name}</h2>
-        <p className="card-description">{place.shortDescription}</p>
+        <p className="card-description">
+  {preventHangingPrepositions(place.shortDescription)}
+</p>
       </div>
     </article>
   );
