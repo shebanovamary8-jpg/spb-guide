@@ -6,6 +6,7 @@ import { PlaceCard } from "@/components/PlaceCard";
 import { places } from "@/data/places";
 import type { Category } from "@/types/place";
 import { preventHangingPrepositions } from "@/lib/typography";
+import { getPlacesFromSupabase } from "@/lib/getPlacesFromSupabase";
 
 const CARD_SPAN_CLASSES = [
   "lg:col-span-4",
@@ -33,6 +34,7 @@ function filterPlaces(list: typeof places, filter: FilterValue) {
 
 export default function Home() {
   const [filter, setFilter] = useState<FilterValue>(null);
+  const [loadedPlaces, setLoadedPlaces] = useState<typeof places>(places);
   const [isStatusActive, setIsStatusActive] = useState(false);
   const [isStatusPinned, setIsStatusPinned] = useState(false);
   const [showStickyFilters, setShowStickyFilters] = useState(false);
@@ -41,7 +43,10 @@ export default function Home() {
   const filtersSectionRef = useRef<HTMLElement | null>(null);
   const lastScrollYRef = useRef(0);
 
-  const visible = useMemo(() => filterPlaces(places, filter), [filter]);
+  const visible = useMemo(
+    () => filterPlaces(loadedPlaces, filter),
+    [loadedPlaces, filter],
+  );
   const contentLayerClassName = [
     "content-layer",
     isStatusActive && !isStatusPinned ? "content-layer--shadow" : "",
@@ -57,6 +62,28 @@ export default function Home() {
     ? "/icons/status-scroll.svg"
     : "/icons/arrow-down.svg";
 
+    useEffect(() => {
+      let isMounted = true;
+    
+      async function loadPlaces() {
+        try {
+          const supabasePlaces = await getPlacesFromSupabase();
+    
+          if (isMounted && supabasePlaces.length > 0) {
+            setLoadedPlaces(supabasePlaces);
+          }
+        } catch (error) {
+          console.error("Failed to load places from Supabase", error);
+        }
+      }
+    
+      loadPlaces();
+    
+      return () => {
+        isMounted = false;
+      };
+    }, []);
+    
     useEffect(() => {
       function updateScrollState() {
         const statusAnchor = statusAnchorRef.current;
