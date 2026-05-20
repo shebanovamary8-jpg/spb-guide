@@ -49,6 +49,7 @@ export default function Home() {
   const statusAnchorRef = useRef<HTMLDivElement | null>(null);
   const filtersSectionRef = useRef<HTMLElement | null>(null);
   const lastScrollYRef = useRef(0);
+  const stickyFiltersShownAtYRef = useRef(0);
 
   const visible = useMemo(
     () => filterPlaces(loadedPlaces, filter),
@@ -101,8 +102,13 @@ export default function Home() {
         const currentScrollY = window.scrollY;
         const scrollDelta = currentScrollY - lastScrollYRef.current;
     
-        const isScrollingUp = scrollDelta < -6;
-        const isScrollingDown = scrollDelta > 12;
+        const isTouchDevice =
+          window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 768;
+    
+        const showThreshold = isTouchDevice ? -8 : -6;
+        const hideDistance = isTouchDevice ? 120 : 40;
+    
+        const isScrollingUp = scrollDelta < showThreshold;
     
         const statusRect = statusAnchor.getBoundingClientRect();
         const filtersRect = filtersSection.getBoundingClientRect();
@@ -129,10 +135,14 @@ export default function Home() {
           }
     
           if (isScrollingUp) {
+            stickyFiltersShownAtYRef.current = currentScrollY;
             return true;
           }
     
-          if (isScrollingDown) {
+          if (
+            previousValue &&
+            currentScrollY > stickyFiltersShownAtYRef.current + hideDistance
+          ) {
             return false;
           }
     
