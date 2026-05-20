@@ -97,7 +97,6 @@ export default function Home() {
       function updateScrollState() {
         const statusAnchor = statusAnchorRef.current;
         const filtersSection = filtersSectionRef.current;
-        const stickyFilters = stickyFiltersRef.current;
     
         if (!statusAnchor || !filtersSection) return;
     
@@ -108,27 +107,33 @@ export default function Home() {
           window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 768;
     
         const showThreshold = isTouchDevice ? -8 : -6;
-        const hideDistance = isTouchDevice ? 180 : 40;
+        const hideDistance = isTouchDevice ? 220 : 60;
     
         const isScrollingUp = scrollDelta < showThreshold;
+        const isScrollingDown = scrollDelta > hideDistance;
     
         const statusRect = statusAnchor.getBoundingClientRect();
-        const filtersRect = filtersSection.getBoundingClientRect();
-        const stickyFiltersRect = stickyFilters?.getBoundingClientRect();
     
         const shouldActivateStatus = currentScrollY > 1;
         const shouldPinStatus = shouldActivateStatus && statusRect.top <= 0;
     
         const statusHeight = statusAnchor.offsetHeight || 60;
     
-        const stickyTop = stickyFiltersRect?.top ?? statusHeight;
-        const stickyBottom = stickyFiltersRect?.bottom ?? statusHeight + 140;
+        const filtersTop = filtersSection.offsetTop;
+        const filtersBottom = filtersTop + filtersSection.offsetHeight;
     
-        const originalFiltersAreAboveSticky =
-          filtersRect.bottom < stickyTop;
+        /**
+         * Когда мы скроллим вверх, sticky-фильтры должны исчезнуть
+         * только когда оригинальные фильтры уже почти доехали до зоны под status bar.
+         */
+        const originalFiltersReachedStickyZone =
+          currentScrollY <= filtersTop - statusHeight;
     
-        const originalFiltersOverlapSticky =
-          filtersRect.bottom > stickyTop && filtersRect.top < stickyBottom;
+        /**
+         * Показываем sticky-фильтры только если оригинальные фильтры уже давно выше экрана.
+         */
+        const originalFiltersAreFarAbove =
+          currentScrollY > filtersBottom + statusHeight;
     
         setIsStatusActive(shouldActivateStatus);
         setIsStatusPinned(shouldPinStatus);
@@ -138,28 +143,24 @@ export default function Home() {
             return false;
           }
     
-          if (originalFiltersOverlapSticky) {
+          if (originalFiltersReachedStickyZone) {
             return false;
           }
     
-          if (isScrollingUp && originalFiltersAreAboveSticky) {
+          if (isScrollingUp && originalFiltersAreFarAbove) {
             stickyFiltersShownAtYRef.current = currentScrollY;
             return true;
           }
     
-          if (
-            previousValue &&
-            originalFiltersAreAboveSticky &&
-            currentScrollY > stickyFiltersShownAtYRef.current + hideDistance
-          ) {
+          if (previousValue && isScrollingDown) {
             return false;
           }
     
-          if (previousValue && originalFiltersAreAboveSticky) {
+          if (previousValue && originalFiltersAreFarAbove) {
             return true;
           }
     
-          return false;
+          return previousValue;
         });
     
         lastScrollYRef.current = currentScrollY;
