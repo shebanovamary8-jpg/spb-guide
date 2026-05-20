@@ -186,6 +186,7 @@ export default function Home() {
   </filter>
 </svg>
       <section className="hero-section">
+        <div className="hero-illustration" aria-hidden="true" />
         <div className="site-container">
           <div className="hero-layout">
             <header className="hero-layout-inner">
@@ -195,9 +196,17 @@ export default function Home() {
   
               <div className="hero-center">
               <p className="hero-intro">
-  {preventHangingPrepositions(
-    "Я Маруся, уже 4 раза была в Питере и каждый раз открываю этот город с новой стороны. Тут собраны места, которые я уже успела посетить. И если ты доверяешь моему мнению — добро пожаловать в подборку",
-  )}
+  Я Маруся,
+  <br />
+  уже&nbsp;4&nbsp;раза&nbsp;была в&nbsp;Питере
+  <br />
+  и&nbsp;каждый раз открываю этот город с&nbsp;новой стороны. Тут&nbsp;собраны места, которые
+  <br />
+  я&nbsp;уже&nbsp;успела посетить. И&nbsp;если
+  <br />
+  ты&nbsp;доверяешь моему мнению&nbsp;— добро
+  <br />
+  пожаловать в&nbsp;подборку
 </p>
               </div>
             </header>
