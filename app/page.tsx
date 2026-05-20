@@ -50,6 +50,7 @@ export default function Home() {
   const filtersSectionRef = useRef<HTMLElement | null>(null);
   const lastScrollYRef = useRef(0);
   const stickyFiltersShownAtYRef = useRef(0);
+  const stickyFiltersRef = useRef<HTMLDivElement | null>(null);
 
   const visible = useMemo(
     () => filterPlaces(loadedPlaces, filter),
@@ -96,6 +97,7 @@ export default function Home() {
       function updateScrollState() {
         const statusAnchor = statusAnchorRef.current;
         const filtersSection = filtersSectionRef.current;
+        const stickyFilters = stickyFiltersRef.current;
     
         if (!statusAnchor || !filtersSection) return;
     
@@ -106,47 +108,58 @@ export default function Home() {
           window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 768;
     
         const showThreshold = isTouchDevice ? -8 : -6;
-        const hideDistance = isTouchDevice ? 120 : 40;
+        const hideDistance = isTouchDevice ? 180 : 40;
     
         const isScrollingUp = scrollDelta < showThreshold;
     
         const statusRect = statusAnchor.getBoundingClientRect();
         const filtersRect = filtersSection.getBoundingClientRect();
+        const stickyFiltersRect = stickyFilters?.getBoundingClientRect();
     
         const shouldActivateStatus = currentScrollY > 1;
         const shouldPinStatus = shouldActivateStatus && statusRect.top <= 0;
     
         const statusHeight = statusAnchor.offsetHeight || 60;
     
-        const originalFiltersAreAboveStickyZone =
-          filtersRect.bottom < statusHeight;
+        const stickyTop = stickyFiltersRect?.top ?? statusHeight;
+        const stickyBottom = stickyFiltersRect?.bottom ?? statusHeight + 140;
     
-        const canShowStickyFilters =
-          shouldPinStatus &&
-          currentScrollY > 300 &&
-          originalFiltersAreAboveStickyZone;
+        const originalFiltersAreAboveSticky =
+          filtersRect.bottom < stickyTop;
+    
+        const originalFiltersOverlapSticky =
+          filtersRect.bottom > stickyTop && filtersRect.top < stickyBottom;
     
         setIsStatusActive(shouldActivateStatus);
         setIsStatusPinned(shouldPinStatus);
     
         setShowStickyFilters((previousValue) => {
-          if (!canShowStickyFilters) {
+          if (!shouldPinStatus || currentScrollY < 300) {
             return false;
           }
     
-          if (isScrollingUp) {
+          if (originalFiltersOverlapSticky) {
+            return false;
+          }
+    
+          if (isScrollingUp && originalFiltersAreAboveSticky) {
             stickyFiltersShownAtYRef.current = currentScrollY;
             return true;
           }
     
           if (
             previousValue &&
+            originalFiltersAreAboveSticky &&
             currentScrollY > stickyFiltersShownAtYRef.current + hideDistance
           ) {
             return false;
           }
     
-          return previousValue;
+          if (previousValue && originalFiltersAreAboveSticky) {
+            return true;
+          }
+    
+          return false;
         });
     
         lastScrollYRef.current = currentScrollY;
@@ -241,7 +254,7 @@ export default function Home() {
        </div>
 
        {showStickyFilters ? (
-         <div className="sticky-filters-panel">
+         <div ref={stickyFiltersRef} className="sticky-filters-panel">
            <CategoryFilters value={filter} onChange={setFilter} />
          </div>
        ) : null}
