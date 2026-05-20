@@ -12,11 +12,18 @@ const CARD_SPAN_CLASSES = [
   "lg:col-span-4",
   "lg:col-span-4",
   "lg:col-span-4",
+  "lg:col-span-4",
+
   "lg:col-span-3",
   "lg:col-span-5",
   "lg:col-span-4",
+  "lg:col-span-4",
+
   "lg:col-span-5",
   "lg:col-span-3",
+  "lg:col-span-4",
+  "lg:col-span-4",
+
   "lg:col-span-4",
   "lg:col-span-4",
   "lg:col-span-5",
@@ -87,23 +94,50 @@ export default function Home() {
     useEffect(() => {
       function updateScrollState() {
         const statusAnchor = statusAnchorRef.current;
+        const filtersSection = filtersSectionRef.current;
     
-        if (!statusAnchor) return;
+        if (!statusAnchor || !filtersSection) return;
     
         const currentScrollY = window.scrollY;
-        const isScrollingUp = currentScrollY < lastScrollYRef.current;
+        const scrollDelta = currentScrollY - lastScrollYRef.current;
+    
+        const isScrollingUp = scrollDelta < -6;
+        const isScrollingDown = scrollDelta > 12;
     
         const statusRect = statusAnchor.getBoundingClientRect();
+        const filtersRect = filtersSection.getBoundingClientRect();
     
         const shouldActivateStatus = currentScrollY > 1;
         const shouldPinStatus = shouldActivateStatus && statusRect.top <= 0;
     
-        const shouldShowStickyFilters =
-          shouldPinStatus && isScrollingUp && currentScrollY > 300;
+        const statusHeight = statusAnchor.offsetHeight || 60;
+    
+        const originalFiltersAreAboveStickyZone =
+          filtersRect.bottom < statusHeight;
+    
+        const canShowStickyFilters =
+          shouldPinStatus &&
+          currentScrollY > 300 &&
+          originalFiltersAreAboveStickyZone;
     
         setIsStatusActive(shouldActivateStatus);
         setIsStatusPinned(shouldPinStatus);
-        setShowStickyFilters(shouldShowStickyFilters);
+    
+        setShowStickyFilters((previousValue) => {
+          if (!canShowStickyFilters) {
+            return false;
+          }
+    
+          if (isScrollingUp) {
+            return true;
+          }
+    
+          if (isScrollingDown) {
+            return false;
+          }
+    
+          return previousValue;
+        });
     
         lastScrollYRef.current = currentScrollY;
       }
@@ -121,6 +155,36 @@ export default function Home() {
 
   return (
     <div className="page-wrapper">
+      <svg
+  className="rough-filter-defs"
+  width="0"
+  height="0"
+  aria-hidden="true"
+  focusable="false"
+>
+  <filter
+    id="rough-border-filter"
+    x="-20%"
+    y="-20%"
+    width="140%"
+    height="140%"
+  >
+    <feTurbulence
+      type="fractalNoise"
+      baseFrequency="0.85"
+      numOctaves="2"
+      seed="8"
+      result="noise"
+    />
+    <feDisplacementMap
+      in="SourceGraphic"
+      in2="noise"
+      scale="1.2"
+      xChannelSelector="R"
+      yChannelSelector="G"
+    />
+  </filter>
+</svg>
       <section className="hero-section">
         <div className="site-container">
           <div className="hero-layout">
@@ -205,14 +269,13 @@ export default function Home() {
         <br />
         Связь:{" "}
         <a
-          href="https://t.me/maresikkk"
+          href="https://t.me/mmarrusyaa"
           className="footer-link"
           target="_blank"
           rel="noreferrer"
         >
           телега
         </a>{" "}
-        / инста
       </p>
 
       <p className="footer-center">Классной поездки!</p>

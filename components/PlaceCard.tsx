@@ -63,7 +63,7 @@ export function PlaceCard({ place }: PlaceCardProps) {
             alt={`${place.name}, фото ${currentImageIndex + 1}`}
             fill
             className="object-cover transition-opacity group-hover:opacity-95"
-            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 42vw"
+            sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 25vw"
             onError={() => setImageFailed(true)}
           />
         ) : (
