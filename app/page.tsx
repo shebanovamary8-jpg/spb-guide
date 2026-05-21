@@ -49,8 +49,12 @@ export default function Home() {
   const statusAnchorRef = useRef<HTMLDivElement | null>(null);
   const filtersSectionRef = useRef<HTMLElement | null>(null);
   const lastScrollYRef = useRef(0);
-  const stickyFiltersShownAtYRef = useRef(0);
-  const stickyFiltersRef = useRef<HTMLDivElement | null>(null);
+
+  const stickyFiltersVisibleRef = useRef(false);
+  const stickyFiltersHideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+  const downScrollDistanceRef = useRef(0);
 
   const visible = useMemo(
     () => filterPlaces(loadedPlaces, filter),
@@ -94,6 +98,31 @@ export default function Home() {
     }, []);
     
     useEffect(() => {
+      function clearStickyFiltersHideTimeout() {
+        if (stickyFiltersHideTimeoutRef.current) {
+          clearTimeout(stickyFiltersHideTimeoutRef.current);
+          stickyFiltersHideTimeoutRef.current = null;
+        }
+      }
+    
+      function showStickyFiltersPanel() {
+        clearStickyFiltersHideTimeout();
+    
+        if (!stickyFiltersVisibleRef.current) {
+          stickyFiltersVisibleRef.current = true;
+          setShowStickyFilters(true);
+        }
+      }
+    
+      function hideStickyFiltersPanel() {
+        clearStickyFiltersHideTimeout();
+    
+        if (stickyFiltersVisibleRef.current) {
+          stickyFiltersVisibleRef.current = false;
+          setShowStickyFilters(false);
+        }
+      }
+    
       function updateScrollState() {
         const statusAnchor = statusAnchorRef.current;
         const filtersSection = filtersSectionRef.current;
@@ -106,11 +135,10 @@ export default function Home() {
         const isTouchDevice =
           window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 768;
     
-        const showThreshold = isTouchDevice ? -6 : -6;
-        const hideDownThreshold = isTouchDevice ? 90 : 40;
+        const showUpThreshold = isTouchDevice ? -6 : -6;
+        const hideDownDistance = isTouchDevice ? 160 : 60;
     
-        const isScrollingUp = scrollDelta < showThreshold;
-        const isScrollingDown = scrollDelta > hideDownThreshold;
+        const isScrollingUp = scrollDelta < showUpThreshold;
     
         const statusRect = statusAnchor.getBoundingClientRect();
     
@@ -119,50 +147,58 @@ export default function Home() {
     
         const statusHeight = statusAnchor.offsetHeight || 60;
     
-        const filtersRect = filtersSection.getBoundingClientRect();
-        const filtersTopOnPage = filtersRect.top + currentScrollY;
-        const filtersBottomOnPage = filtersTopOnPage + filtersSection.offsetHeight;
+        const filtersTopOnPage =
+          filtersSection.getBoundingClientRect().top + currentScrollY;
     
-        /**
-         * Показываем второй фильтр только когда мы уже реально ниже
-         * оригинального блока фильтров.
-         */
+        const filtersBottomOnPage =
+          filtersTopOnPage + filtersSection.offsetHeight;
+    
         const originalFiltersAlreadyPassed =
-          currentScrollY > filtersBottomOnPage + 120;
+          currentScrollY > filtersBottomOnPage + statusHeight + 80;
     
-        /**
-         * Скрываем второй фильтр, когда оригинальный блок фильтров
-         * уже подъехал обратно к зоне под статус-баром.
-         */
-        const originalFiltersReturnedToTop =
+        const originalFiltersReturnedToStickyZone =
           currentScrollY <= filtersTopOnPage - statusHeight - 24;
     
         setIsStatusActive(shouldActivateStatus);
         setIsStatusPinned(shouldPinStatus);
     
-        setShowStickyFilters((previousValue) => {
-          if (!shouldPinStatus || currentScrollY < 300) {
-            return false;
-          }
+        if (!shouldPinStatus || currentScrollY < 300) {
+          downScrollDistanceRef.current = 0;
+          hideStickyFiltersPanel();
+          lastScrollYRef.current = currentScrollY;
+          return;
+        }
     
-          if (originalFiltersReturnedToTop) {
-            return false;
-          }
+        if (originalFiltersReturnedToStickyZone) {
+          downScrollDistanceRef.current = 0;
+          hideStickyFiltersPanel();
+          lastScrollYRef.current = currentScrollY;
+          return;
+        }
     
-          if (isScrollingDown) {
-            return false;
-          }
+        if (scrollDelta > 0) {
+          downScrollDistanceRef.current += scrollDelta;
+        }
     
-          if (previousValue) {
-            return true;
-          }
+        if (scrollDelta < -2) {
+          downScrollDistanceRef.current = 0;
+        }
     
-          if (isScrollingUp && originalFiltersAlreadyPassed) {
-            return true;
-          }
+        if (isScrollingUp && originalFiltersAlreadyPassed) {
+          showStickyFiltersPanel();
+          lastScrollYRef.current = currentScrollY;
+          return;
+        }
     
-          return false;
-        });
+        if (
+          stickyFiltersVisibleRef.current &&
+          downScrollDistanceRef.current > hideDownDistance
+        ) {
+          hideStickyFiltersPanel();
+          downScrollDistanceRef.current = 0;
+          lastScrollYRef.current = currentScrollY;
+          return;
+        }
     
         lastScrollYRef.current = currentScrollY;
       }
@@ -173,6 +209,7 @@ export default function Home() {
       window.addEventListener("resize", updateScrollState);
     
       return () => {
+        clearStickyFiltersHideTimeout();
         window.removeEventListener("scroll", updateScrollState);
         window.removeEventListener("resize", updateScrollState);
       };
@@ -256,7 +293,7 @@ export default function Home() {
        </div>
 
        {showStickyFilters ? (
-         <div ref={stickyFiltersRef} className="sticky-filters-panel">
+         <div className="sticky-filters-panel">
            <CategoryFilters value={filter} onChange={setFilter} />
          </div>
        ) : null}
