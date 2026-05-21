@@ -292,11 +292,14 @@ export default function Home() {
          </div>
        </div>
 
-       {showStickyFilters ? (
-         <div className="sticky-filters-panel">
-           <CategoryFilters value={filter} onChange={setFilter} />
-         </div>
-       ) : null}
+       <div
+         className={`sticky-filters-panel ${
+           showStickyFilters ? "sticky-filters-panel--visible" : ""
+         }`}
+         aria-hidden={!showStickyFilters}
+       >
+         <CategoryFilters value={filter} onChange={setFilter} />
+       </div>
 
        <main className="w-full flex-1">
   

@@ -433,13 +433,37 @@ body {
 .sticky-filters-panel {
   position: fixed;
   top: var(--status-shell-height);
-  right: 0;
   left: 0;
-  z-index: 49;
+  right: 0;
+  z-index: 45;
+
   box-sizing: border-box;
-  padding: 0 var(--space-page-x) 20px;
+  width: 100%;
+  padding: 0 var(--space-page-x) 16px;
+
   background-color: var(--color-page-bg);
-  animation: sticky-filters-show 0.18s ease-out;
+
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  pointer-events: none;
+
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease,
+    visibility 0s linear 0.18s;
+}
+
+.sticky-filters-panel--visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease,
+    visibility 0s linear 0s;
 }
 
 @keyframes sticky-filters-show {
