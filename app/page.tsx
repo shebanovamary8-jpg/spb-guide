@@ -106,11 +106,11 @@ export default function Home() {
         const isTouchDevice =
           window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 768;
     
-        const showThreshold = isTouchDevice ? -8 : -6;
-        const hideDistance = isTouchDevice ? 220 : 60;
+        const showThreshold = isTouchDevice ? -6 : -6;
+        const hideDownThreshold = isTouchDevice ? 90 : 40;
     
         const isScrollingUp = scrollDelta < showThreshold;
-        const isScrollingDown = scrollDelta > hideDistance;
+        const isScrollingDown = scrollDelta > hideDownThreshold;
     
         const statusRect = statusAnchor.getBoundingClientRect();
     
@@ -119,21 +119,23 @@ export default function Home() {
     
         const statusHeight = statusAnchor.offsetHeight || 60;
     
-        const filtersTop = filtersSection.offsetTop;
-        const filtersBottom = filtersTop + filtersSection.offsetHeight;
+        const filtersRect = filtersSection.getBoundingClientRect();
+        const filtersTopOnPage = filtersRect.top + currentScrollY;
+        const filtersBottomOnPage = filtersTopOnPage + filtersSection.offsetHeight;
     
         /**
-         * Когда мы скроллим вверх, sticky-фильтры должны исчезнуть
-         * только когда оригинальные фильтры уже почти доехали до зоны под status bar.
+         * Показываем второй фильтр только когда мы уже реально ниже
+         * оригинального блока фильтров.
          */
-        const originalFiltersReachedStickyZone =
-          currentScrollY <= filtersTop - statusHeight;
+        const originalFiltersAlreadyPassed =
+          currentScrollY > filtersBottomOnPage + 120;
     
         /**
-         * Показываем sticky-фильтры только если оригинальные фильтры уже давно выше экрана.
+         * Скрываем второй фильтр, когда оригинальный блок фильтров
+         * уже подъехал обратно к зоне под статус-баром.
          */
-        const originalFiltersAreFarAbove =
-          currentScrollY > filtersBottom + statusHeight;
+        const originalFiltersReturnedToTop =
+          currentScrollY <= filtersTopOnPage - statusHeight - 24;
     
         setIsStatusActive(shouldActivateStatus);
         setIsStatusPinned(shouldPinStatus);
@@ -143,24 +145,23 @@ export default function Home() {
             return false;
           }
     
-          if (originalFiltersReachedStickyZone) {
+          if (originalFiltersReturnedToTop) {
             return false;
           }
     
-          if (isScrollingUp && originalFiltersAreFarAbove) {
-            stickyFiltersShownAtYRef.current = currentScrollY;
-            return true;
-          }
-    
-          if (previousValue && isScrollingDown) {
+          if (isScrollingDown) {
             return false;
           }
     
-          if (previousValue && originalFiltersAreFarAbove) {
+          if (previousValue) {
             return true;
           }
     
-          return previousValue;
+          if (isScrollingUp && originalFiltersAlreadyPassed) {
+            return true;
+          }
+    
+          return false;
         });
     
         lastScrollYRef.current = currentScrollY;
