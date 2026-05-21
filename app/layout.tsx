@@ -10,9 +10,34 @@ const nkDuyMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Смотреть Питер — подборка мест",
+  metadataBase: new URL("https://spb-guide.vercel.app"),
+  title: "Смотреть Питер",
   description:
-    "Личная подборка мест в Санкт-Петербурге от Маруси: поесть, выпить, посмотреть и расслабиться.",
+    "Личная подборка проверенных мест в Питере: поесть, выпить, посмотреть и немного выдохнуть.",
+  openGraph: {
+    title: "Смотреть Питер",
+    description:
+      "Личная подборка проверенных мест в Питере: поесть, выпить, посмотреть и немного выдохнуть.",
+    url: "https://spb-guide.vercel.app",
+    siteName: "Смотреть Питер",
+    type: "website",
+    locale: "ru_RU",
+    images: [
+      {
+        url: "/opengraph-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Смотреть Питер",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Смотреть Питер",
+    description:
+      "Личная подборка проверенных мест в Питере: поесть, выпить, посмотреть и немного выдохнуть.",
+    images: ["/opengraph-image.png"],
+  },
 };
 
 export default function RootLayout({
